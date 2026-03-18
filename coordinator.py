@@ -1,7 +1,7 @@
 """
 Airtasker AI Coordinator — GitHub Actions version
 ===================================================
-Runs headless in the cloud, scrapes Airtasker, filters Apr 2–20,
+Runs headless in the cloud, scrapes Airtasker, filters Mar 18–25,
 scores jobs with Claude, and writes dashboard.html to /docs
 so GitHub Pages serves it as a live URL.
 
@@ -26,11 +26,12 @@ EMAIL          = os.environ["AT_EMAIL"]
 PASSWORD       = os.environ["AT_PASSWORD"]
 ANTHROPIC_KEY  = os.environ["ANTHROPIC_API_KEY"]
 
-DATE_FROM      = date(2026, 4, 2)
-DATE_TO        = date(2026, 4, 20)
+DATE_FROM      = date(2026, 3, 18)
+DATE_TO        = date(2026, 3, 25)
 MAX_RADIUS_KM  = 50
 BASE_SUBURB    = "Rose Bay, Sydney"
 SERVICES       = ["IKEA/flatpack assembly (min $50)", "removals up to king bed (min $100)", "gardening with lawnmower or whipper snipper ($100-$400)"]
+EXCLUDED       = ["cleaning", "end of lease clean", "house clean", "office clean", "carpet clean", "window clean"]
 SCROLL_PASSES  = 8
 OUTPUT_PATH    = Path("docs/dashboard.html")
 
@@ -187,6 +188,8 @@ LOCATION:
 - Only accept jobs within {MAX_RADIUS_KM}km of Rose Bay, Sydney (Eastern Suburbs, Inner East, Inner West, Lower North Shore, City, Inner South, Northern Beaches all fine)
 - Skip jobs in outer western suburbs, Penrith, Central Coast, Wollongong, Blue Mountains or anywhere clearly beyond {MAX_RADIUS_KM}km
 
+CLEANING JOBS: always assign Skip regardless of budget or date — we do not offer any cleaning services including end of lease, house cleaning, office cleaning, carpet cleaning, or window cleaning.
+
 EVERYTHING ELSE: assign Skip.
 
 Return ONLY a valid JSON array — no markdown, no explanation.
@@ -214,7 +217,7 @@ Scoring guide (only for jobs that pass ALL criteria above):
 - Location within 10km of Rose Bay = +15 points
 - Location 10-30km from Rose Bay = +5 points
 - Location 30-50km from Rose Bay = 0 bonus
-- inDateWindow: true ONLY if a specific date between Apr 2 and Apr 20 is explicitly mentioned. false if no date mentioned or date is outside that range.
+- inDateWindow: true ONLY if a specific date between {DATE_FROM.strftime('%d %b')} and {DATE_TO.strftime('%d %b')} is explicitly mentioned. false if no date mentioned or date is outside that range.
 - assignTo Skip if: wrong category, budget too low or too high, gardening has no powered equipment, date outside window or not specified, location too far
 
 Jobs to analyse:
@@ -264,7 +267,6 @@ async def score_all(jobs: list[dict]) -> list[dict]:
         scored = await score_batch(batch)
         all_scored.extend(scored)
 
-    # Remove skips and out-of-window, sort by score
     all_scored = [j for j in all_scored if j.get("assignTo") != "Skip" and j.get("inDateWindow", True)]
     all_scored.sort(key=lambda x: x.get("score", 0), reverse=True)
     print(f"[3/4] {len(all_scored)} viable jobs after filtering.")
@@ -341,7 +343,7 @@ def generate_dashboard(jobs: list[dict]) -> None:
 <body>
 <div class="header">
   <div class="logo"><div class="dot"></div>Coordinator Dashboard</div>
-  <div class="meta">Updated {generated_at} &nbsp;·&nbsp; Apr 2–20 &nbsp;·&nbsp; <span id="vc"></span></div>
+  <div class="meta">Updated {generated_at} &nbsp;·&nbsp; {DATE_FROM.strftime('%d %b')}–{DATE_TO.strftime('%d %b')} &nbsp;·&nbsp; <span id="vc"></span></div>
 </div>
 <div class="layout">
   <div class="sidebar">
@@ -352,6 +354,7 @@ def generate_dashboard(jobs: list[dict]) -> None:
       <button class="f-btn" onclick="filt('high',this)">High score</button>
       <button class="f-btn" onclick="filt('assembly',this)">Assembly</button>
       <button class="f-btn" onclick="filt('removals',this)">Removals</button>
+      <button class="f-btn" onclick="filt('gardening',this)">Gardening</button>
     </div>
     <div id="jlist"></div>
   </div>
@@ -404,6 +407,7 @@ function filt(type,btn){{
   else if(type==='high')f=JOBS.filter(j=>j.score>=65);
   else if(type==='assembly')f=JOBS.filter(j=>j.category==='assembly');
   else if(type==='removals')f=JOBS.filter(j=>j.category==='removals');
+  else if(type==='gardening')f=JOBS.filter(j=>j.category==='gardening');
   renderList(f);
 }}
 renderList(JOBS);
@@ -413,7 +417,6 @@ renderList(JOBS);
 
     OUTPUT_PATH.write_text(html, encoding="utf-8")
 
-    # Write a minimal index.html redirect so github.com/yourname/yourrepo goes straight to dashboard
     index = OUTPUT_PATH.parent / "index.html"
     index.write_text(
         '<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0;url=dashboard.html"></head></html>',
