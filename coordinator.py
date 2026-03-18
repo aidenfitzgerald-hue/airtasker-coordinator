@@ -28,8 +28,9 @@ ANTHROPIC_KEY  = os.environ["ANTHROPIC_API_KEY"]
 
 DATE_FROM      = date(2026, 4, 2)
 DATE_TO        = date(2026, 4, 20)
-MAX_RADIUS_KM  = 20
-SERVICES       = ["furniture assembly", "removals (up to king bed)", "gardening", "cleaning"]
+MAX_RADIUS_KM  = 50
+BASE_SUBURB    = "Rose Bay, Sydney"
+SERVICES       = ["IKEA/flatpack assembly (min $50)", "removals up to king bed (min $100)", "gardening with lawnmower or whipper snipper ($100-$400)"]
 SCROLL_PASSES  = 8
 OUTPUT_PATH    = Path("docs/dashboard.html")
 
@@ -151,7 +152,7 @@ def is_in_date_window(text: str) -> bool:
             return DATE_FROM <= d <= DATE_TO
         except ValueError:
             pass
-    return True  # no date mentioned — include it
+    return False  # no date mentioned — exclude it
 
 
 # ─────────────────────────────────────────────
@@ -160,11 +161,33 @@ def is_in_date_window(text: str) -> bool:
 async def score_batch(jobs: list[dict]) -> list[dict]:
     jobs_text = "\n\n---\n\n".join(f"JOB {i+1}:\n{j['text'][:600]}" for i, j in enumerate(jobs))
 
-    prompt = f"""You are an AI coordinator for a small Airtasker operation in Sydney, Australia.
-Services: {', '.join(SERVICES)}
-Max radius: {MAX_RADIUS_KM}km from inner Sydney
-Working dates: {DATE_FROM.strftime('%d %B')} to {DATE_TO.strftime('%d %B %Y')} ONLY
+    prompt = f"""You are an AI coordinator for a small Airtasker operation based in {BASE_SUBURB}, Sydney, Australia.
+Working dates: {DATE_FROM.strftime('%d %B')} to {DATE_TO.strftime('%d %B %Y')} ONLY.
+Max radius: {MAX_RADIUS_KM}km from Rose Bay, Sydney.
 Two teams of 2 available simultaneously (Team A and Team B).
+
+OUR STRICT JOB CRITERIA — only accept jobs that meet ALL conditions:
+
+REMOVALS:
+- Must involve moving furniture or items (up to king bed size)
+- Budget must be $100 or above — skip anything under $100
+- Score higher for larger moves and higher budgets
+
+ASSEMBLY:
+- Strongly prefer IKEA or flatpack furniture builds
+- Budget must be $50 or above — skip anything under $50
+- Score higher if they specifically mention IKEA, PAX, KALLAX, BILLY, HEMNES, flatpack, etc.
+
+GARDENING:
+- Only accept if the job explicitly requires a lawnmower, ride-on, whipper snipper, line trimmer, or similar powered mowing equipment
+- Skip weeding, pruning, planting, hedging, or general garden cleanup that does not need powered mowing equipment
+- Budget must be between $100 and $400 — skip anything outside this range
+
+LOCATION:
+- Only accept jobs within {MAX_RADIUS_KM}km of Rose Bay, Sydney (Eastern Suburbs, Inner East, Inner West, Lower North Shore, City, Inner South, Northern Beaches all fine)
+- Skip jobs in outer western suburbs, Penrith, Central Coast, Wollongong, Blue Mountains or anywhere clearly beyond {MAX_RADIUS_KM}km
+
+EVERYTHING ELSE: assign Skip.
 
 Return ONLY a valid JSON array — no markdown, no explanation.
 One object per job:
@@ -173,20 +196,28 @@ One object per job:
   "title": "concise title max 8 words",
   "budget": "$XX or open",
   "location": "suburb or not specified",
-  "category": "assembly|removals|gardening|cleaning|other",
-  "dateNote": "date mentioned or no date specified",
+  "category": "assembly|removals|gardening|skip",
+  "dateNote": "exact date mentioned in listing",
   "inDateWindow": true or false,
   "score": 0-100,
   "scoreLevel": "high|med|low",
   "assignTo": "Team A|Team B|Either|Skip",
-  "reason": "one sentence",
-  "bidMessage": "50-70 word personalised bid, natural tone, mention their specific task, say we are a professional team of 2 available within April 2-20, do not use Hey, no exclamation marks"
+  "reason": "one sentence explaining score and why accepted or skipped",
+  "bidMessage": "50-70 word personalised bid, natural tone, reference their specific job details, state we are a professional team of 2 available on their requested date, do not use Hey, no exclamation marks — leave empty string if assignTo is Skip"
 }}
 
-Scoring: high budget >$200 = +30, exact service match = +25, close location = +15, out of scope = score 0-15 assignTo Skip.
-inDateWindow: true if date is Apr 2-20 OR no date mentioned.
+Scoring guide (only for jobs that pass ALL criteria above):
+- Removals $100-199 = score 50-65 | $200+ = score 70-90
+- Assembly IKEA/flatpack $50-99 = score 55-70 | $100+ = score 75-90
+- Assembly non-specific brand $50+ = score 40-55
+- Gardening mowing/whipper snipper $100-200 = score 50-65 | $200-400 = score 65-85
+- Location within 10km of Rose Bay = +15 points
+- Location 10-30km from Rose Bay = +5 points
+- Location 30-50km from Rose Bay = 0 bonus
+- inDateWindow: true ONLY if a specific date between Apr 2 and Apr 20 is explicitly mentioned. false if no date mentioned or date is outside that range.
+- assignTo Skip if: wrong category, budget too low or too high, gardening has no powered equipment, date outside window or not specified, location too far
 
-Jobs:
+Jobs to analyse:
 {jobs_text}"""
 
     async with httpx.AsyncClient(timeout=90) as client:
