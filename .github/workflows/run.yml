@@ -1,9 +1,22 @@
 name: Airtasker Coordinator
 
 on:
-  # Runs every morning at 7:00 AM Sydney time (AEDT = UTC+11 in April)
+  # Runs every hour between 6am and 6pm Sydney time (AEDT = UTC+11 in March)
+  # 6am AEDT = 19:00 UTC | 6pm AEDT = 07:00 UTC
   schedule:
-    - cron: '0 20 * * *'   # 20:00 UTC = 07:00 AEDT
+    - cron: '0 19 * * *'   # 06:00 AEDT
+    - cron: '0 20 * * *'   # 07:00 AEDT
+    - cron: '0 21 * * *'   # 08:00 AEDT
+    - cron: '0 22 * * *'   # 09:00 AEDT
+    - cron: '0 23 * * *'   # 10:00 AEDT
+    - cron: '0 0 * * *'    # 11:00 AEDT
+    - cron: '0 1 * * *'    # 12:00 AEDT (noon)
+    - cron: '0 2 * * *'    # 13:00 AEDT
+    - cron: '0 3 * * *'    # 14:00 AEDT
+    - cron: '0 4 * * *'    # 15:00 AEDT
+    - cron: '0 5 * * *'    # 16:00 AEDT
+    - cron: '0 6 * * *'    # 17:00 AEDT
+    - cron: '0 7 * * *'    # 18:00 AEDT
 
   # Also lets you trigger it manually from GitHub's website
   workflow_dispatch:
