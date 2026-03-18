@@ -279,7 +279,7 @@ async def score_all(jobs: list[dict]) -> list[dict]:
         scored = await score_batch(batch)
         all_scored.extend(scored)
 
-    all_scored = [j for j in all_scored if j.get("assignTo") != "Skip" and j.get("inDateWindow", True)]
+    all_scored = [j for j in all_scored if j.get("assignTo") != "Skip"
     all_scored.sort(key=lambda x: x.get("score", 0), reverse=True)
     print(f"[3/4] {len(all_scored)} viable jobs after filtering.")
     return all_scored
