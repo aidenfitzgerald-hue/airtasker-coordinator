@@ -1,0 +1,54 @@
+name: Airtasker Coordinator
+
+on:
+  # Runs every morning at 7:00 AM Sydney time (AEDT = UTC+11 in April)
+  schedule:
+    - cron: '0 20 * * *'   # 20:00 UTC = 07:00 AEDT
+
+  # Also lets you trigger it manually from GitHub's website
+  workflow_dispatch:
+
+permissions:
+  contents: write   # needed to push dashboard.html to the repo
+
+jobs:
+  run-coordinator:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Check out your repo
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      # 2. Set up Python
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      # 3. Install dependencies
+      - name: Install Python packages
+        run: pip install playwright httpx python-dotenv
+
+      # 4. Install Chromium browser for Playwright
+      - name: Install Chromium
+        run: playwright install chromium --with-deps
+
+      # 5. Run the coordinator script
+      #    Credentials come from GitHub Secrets — never stored in code
+      - name: Run coordinator
+        env:
+          AT_EMAIL: ${{ secrets.AT_EMAIL }}
+          AT_PASSWORD: ${{ secrets.AT_PASSWORD }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python coordinator.py
+
+      # 6. Commit and push the updated dashboard.html to the repo
+      #    GitHub Pages then serves it automatically
+      - name: Publish dashboard to GitHub Pages
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/
+          git diff --staged --quiet || git commit -m "Dashboard update $(date +'%d %b %Y %H:%M')"
+          git push
