@@ -153,7 +153,7 @@ def is_in_date_window(text: str) -> bool:
             return DATE_FROM <= d <= DATE_TO
         except ValueError:
             pass
-    return False  # no date mentioned — exclude it
+    return True  # no date mentioned — exclude it
 
 
 # ─────────────────────────────────────────────
