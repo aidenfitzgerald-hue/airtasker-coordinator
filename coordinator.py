@@ -153,7 +153,7 @@ def is_in_date_window(text: str) -> bool:
             return DATE_FROM <= d <= DATE_TO
         except ValueError:
             pass
-    return True  # no date mentioned — exclude it
+    return False  # no date mentioned — exclude it
 
 
 # ─────────────────────────────────────────────
@@ -167,30 +167,44 @@ Working dates: {DATE_FROM.strftime('%d %B')} to {DATE_TO.strftime('%d %B %Y')} O
 Max radius: {MAX_RADIUS_KM}km from Rose Bay, Sydney.
 Two teams of 2 available simultaneously (Team A and Team B).
 
-OUR STRICT JOB CRITERIA — only accept jobs that meet ALL conditions:
+We accept three categories of jobs. Be GENEROUS with matching — if a job could reasonably fit a category, include it. Only skip jobs that clearly do not fit any category, are cleaning, or have a budget explicitly stated and too low.
 
-REMOVALS:
-- Must involve moving furniture or items (up to king bed size)
-- Budget must be $100 or above — skip anything under $100
-- Score higher for larger moves and higher budgets
+REMOVALS — accept any job involving moving, transporting, lifting or disposing of physical items. This includes:
+- Moving furniture, boxes, appliances, mattresses, beds, couches, fridges, washing machines
+- Single item moves or full house/unit/office moves
+- Rubbish removal, junk removal, tip runs, taking things to the dump, skip bin loading
+- Helping someone move out or move in
+- Transporting items bought from Facebook Marketplace, Gumtree, or stores
+- Loading or unloading a truck, van or trailer
+- Disposing of old furniture, e-waste, garden waste, building materials
+- Budget must be $100 or above — skip if explicitly under $100. If budget is open/not stated, include it.
 
-ASSEMBLY:
-- Strongly prefer IKEA or flatpack furniture builds
-- Budget must be $50 or above — skip anything under $50
-- Score higher if they specifically mention IKEA, PAX, KALLAX, BILLY, HEMNES, flatpack, etc.
+ASSEMBLY — accept any job involving building, putting together, installing or mounting things. This includes:
+- IKEA and all flatpack furniture (PAX, KALLAX, BILLY, HEMNES, MALM, BESTA, EKET, STUVA, FRIHETEN etc.)
+- Any flatpack or self-assembly furniture from Kmart, Big W, Bunnings, Temple & Webster, Fantastic Furniture, JYSK, Freedom
+- Beds, bed frames, wardrobes, shelving, bookcases, TV units, dining tables, desks, office chairs, drawers
+- Trampolines, cubby houses, outdoor furniture, BBQs, gym equipment, bike assembly
+- TV wall mounting, shelf installation, picture hanging, curtain rod installation
+- Flat-pack kitchens, laundry units, storage systems
+- Budget must be $50 or above — skip if explicitly under $50. If budget is open/not stated, include it.
 
-GARDENING:
-- Only accept if the job explicitly requires a lawnmower, ride-on, whipper snipper, line trimmer, or similar powered mowing equipment
-- Skip weeding, pruning, planting, hedging, or general garden cleanup that does not need powered mowing equipment
-- Budget must be between $100 and $400 — skip anything outside this range
+GARDENING — accept any outdoor garden or yard job. This includes:
+- Lawn mowing, grass cutting, ride-on mowing, whipper snipping, line trimming, edging
+- Garden cleanup, yard cleanup, clearing overgrown areas, removing weeds, leaf blowing
+- Hedge trimming, bush trimming, pruning, cutting back trees or shrubs
+- Mulching, garden bed preparation, laying turf
+- Pressure washing driveways, paths, decks
+- General outdoor tidying and maintenance
+- Budget must be $200 or below — skip if explicitly over $200. If budget is open/not stated, include it.
 
 LOCATION:
-- Only accept jobs within {MAX_RADIUS_KM}km of Rose Bay, Sydney (Eastern Suburbs, Inner East, Inner West, Lower North Shore, City, Inner South, Northern Beaches all fine)
-- Skip jobs in outer western suburbs, Penrith, Central Coast, Wollongong, Blue Mountains or anywhere clearly beyond {MAX_RADIUS_KM}km
+- Accept jobs within {MAX_RADIUS_KM}km of Rose Bay — Eastern Suburbs, Inner West, Inner East, Lower North Shore, Northern Beaches, City, South Sydney, Sutherland Shire all fine
+- Skip only if the job is clearly in outer west (Penrith, Blacktown, Parramatta area), Central Coast, Wollongong, or Blue Mountains
+- If no location is stated, include the job — do not skip for missing location
 
-CLEANING JOBS: always assign Skip regardless of budget or date — we do not offer any cleaning services including end of lease, house cleaning, office cleaning, carpet cleaning, or window cleaning.
+CLEANING — always Skip. This means end of lease cleans, bond cleans, house cleaning, office cleaning, carpet cleaning, window cleaning, oven cleaning, bathroom scrubbing. Do NOT accept cleaning jobs under any circumstances.
 
-EVERYTHING ELSE: assign Skip.
+EVERYTHING ELSE that cannot reasonably fit removals, assembly or gardening — Skip.
 
 Return ONLY a valid JSON array — no markdown, no explanation.
 One object per job:
@@ -200,25 +214,23 @@ One object per job:
   "budget": "$XX or open",
   "location": "suburb or not specified",
   "category": "assembly|removals|gardening|skip",
-  "dateNote": "exact date mentioned in listing",
-  "inDateWindow": true or false,
+  "dateNote": "exact date mentioned in listing or none",
+  "inDateWindow": true,
   "score": 0-100,
   "scoreLevel": "high|med|low",
   "assignTo": "Team A|Team B|Either|Skip",
-  "reason": "one sentence explaining score and why accepted or skipped",
-  "bidMessage": "50-70 word personalised bid, natural tone, reference their specific job details, state we are a professional team of 2 available on their requested date, do not use Hey, no exclamation marks — leave empty string if assignTo is Skip"
+  "reason": "one sentence explaining score",
+  "bidMessage": "50-70 word personalised bid, natural tone, reference their specific job details, say we are a professional team of 2, mention we are available and keen to help, do not use Hey, no exclamation marks — leave empty string if assignTo is Skip"
 }}
 
-Scoring guide (only for jobs that pass ALL criteria above):
-- Removals $100-199 = score 50-65 | $200+ = score 70-90
-- Assembly IKEA/flatpack $50-99 = score 55-70 | $100+ = score 75-90
-- Assembly non-specific brand $50+ = score 40-55
-- Gardening mowing/whipper snipper $100-200 = score 50-65 | $200-400 = score 65-85
+Scoring guide:
+- Removals $100-199 = score 50-65 | $200+ = score 70-90 | open budget = score 50
+- Assembly IKEA/flatpack named brand $50-99 = score 60-75 | $100+ = score 75-90 | open budget = score 55
+- Assembly generic flatpack $50+ = score 45-60 | open budget = score 45
+- Gardening any outdoor work up to $200 = score 45-75 | open budget = score 45
 - Location within 10km of Rose Bay = +15 points
-- Location 10-30km from Rose Bay = +5 points
-- Location 30-50km from Rose Bay = 0 bonus
-- inDateWindow: true ONLY if a specific date between {DATE_FROM.strftime('%d %b')} and {DATE_TO.strftime('%d %b')} is explicitly mentioned. false if no date mentioned or date is outside that range.
-- assignTo Skip if: wrong category, budget too low or too high, gardening has no powered equipment, date outside window or not specified, location too far
+- Location 10-30km = +5 points | 30-50km = 0 bonus
+- assignTo Skip ONLY if: it is a cleaning job, budget is explicitly stated and too low, or location is clearly beyond {MAX_RADIUS_KM}km
 
 Jobs to analyse:
 {jobs_text}"""
