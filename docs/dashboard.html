@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jobs — 18 Mar 2026, 06:25 AM</title>
+<title>Jobs — 18 Mar 2026, 06:56 AM</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@400;500;600&display=swap');
   :root{--bg:#0e0f11;--surface:#16181c;--surface2:#1e2026;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);--text:#e8eaf0;--muted:#6b7280;--accent:#22d3a0;--amber:#f59e0b;--red:#f87171;--blue:#60a5fa;--purple:#a78bfa;--font:'Sora',sans-serif;--mono:'DM Mono',monospace}
@@ -58,7 +58,7 @@
 <body>
 <div class="header">
   <div class="logo"><div class="dot"></div>Coordinator Dashboard</div>
-  <div class="meta">Updated 18 Mar 2026, 06:25 AM &nbsp;·&nbsp; Apr 2–20 &nbsp;·&nbsp; <span id="vc"></span></div>
+  <div class="meta">Updated 18 Mar 2026, 06:56 AM &nbsp;·&nbsp; Apr 2–20 &nbsp;·&nbsp; <span id="vc"></span></div>
 </div>
 <div class="layout">
   <div class="sidebar">
@@ -75,53 +75,7 @@
   <div class="main"><div id="detail"><div class="empty"><div style="font-size:28px;opacity:.3">←</div><div>Select a job to view the bid</div></div></div></div>
 </div>
 <script>
-const JOBS=[
-  {
-    "index": 2,
-    "title": "Downstairs cleaning 2 story townhouse",
-    "budget": "$220",
-    "location": "not specified",
-    "category": "cleaning",
-    "dateNote": "no date specified",
-    "inDateWindow": true,
-    "score": 55,
-    "scoreLevel": "med",
-    "assignTo": "Either",
-    "reason": "Good budget cleaning job within our services scope.",
-    "bidMessage": "We are a professional team of 2 specializing in residential cleaning services and available within April 2-20. We can efficiently handle the downstairs cleaning of your townhouse, including all rooms, bathrooms and common areas. Our thorough approach ensures quality results and we bring all necessary cleaning supplies.",
-    "url": "https://www.airtasker.com/tasks/we-have-a-2-story-townhouse-but-only-need-the-downstairs-done-x01kkznnhd66e64qk7fkvk5ddnp/"
-  },
-  {
-    "index": 1,
-    "title": "reliable cleaner space maintenance",
-    "budget": "$600",
-    "location": "not specified",
-    "category": "cleaning",
-    "dateNote": "no date specified",
-    "inDateWindow": true,
-    "score": 55,
-    "scoreLevel": "med",
-    "assignTo": "Either",
-    "reason": "Good budget and exact service match but remote location unclear.",
-    "bidMessage": "We're a professional team of 2 experienced cleaners available within April 2-20. We specialize in thorough space cleaning and maintenance with attention to detail. Our systematic approach ensures consistent quality results. We bring all necessary equipment and eco-friendly products. Happy to discuss your specific cleaning requirements and schedule.",
-    "url": "https://www.airtasker.com/tasks/looking-for-a-reliable-cleaner-to-clean-and-maintain-space-x01kkxqbe868h85bx2hqxcy28a6/"
-  },
-  {
-    "index": 14,
-    "title": "Assembling",
-    "budget": "$30",
-    "location": "not specified",
-    "category": "assembly",
-    "dateNote": "no date specified",
-    "inDateWindow": true,
-    "score": 25,
-    "scoreLevel": "low",
-    "assignTo": "Either",
-    "reason": "Exact service match but very low budget for team.",
-    "bidMessage": "We are a professional team of 2 specializing in furniture assembly and available within April 2-20. We can handle your assembly task efficiently with proper tools and experience. Could you please provide details about what items need assembling so we can ensure we complete everything to your satisfaction.",
-    "url": "https://www.airtasker.com/tasks/getting-money-x01kky9dx4b3kjwv7jm3djjxk1g/"
-  }
-];
+const JOBS=[];
 function sc(s){return s>=65?'var(--accent)':s>=35?'var(--amber)':'var(--muted)'}
 function sl(s){return s>=65?'sh':s>=35?'sm':'sl'}
 function tc(t){return t==='Team A'?'ta':t==='Team B'?'tb':'te'}
