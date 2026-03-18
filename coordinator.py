@@ -27,7 +27,7 @@ PASSWORD       = os.environ["AT_PASSWORD"]
 ANTHROPIC_KEY  = os.environ["ANTHROPIC_API_KEY"]
 
 DATE_FROM      = date(2026, 3, 18)
-DATE_TO        = date(2026, 3, 25)
+DATE_TO        = date(2026, 6,18 )
 MAX_RADIUS_KM  = 50
 BASE_SUBURB    = "Rose Bay, Sydney"
 SERVICES       = ["IKEA/flatpack assembly (min $50)", "removals up to king bed (min $100)", "gardening with lawnmower or whipper snipper ($100-$400)"]
@@ -279,7 +279,7 @@ async def score_all(jobs: list[dict]) -> list[dict]:
         scored = await score_batch(batch)
         all_scored.extend(scored)
 
-    all_scored = [j for j in all_scored if j.get("assignTo") != "Skip"]
+    all_scored = [j for j in all_scored if j.get("assignTo") != "Skip" and j.get("inDateWindow", True)]
     all_scored.sort(key=lambda x: x.get("score", 0), reverse=True)
     print(f"[3/4] {len(all_scored)} viable jobs after filtering.")
     return all_scored
