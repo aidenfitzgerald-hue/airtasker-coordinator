@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jobs — 21 Mar 2026, 05:33 AM</title>
+<title>Jobs — 21 Mar 2026, 05:59 AM</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@400;500;600&display=swap');
   :root{--bg:#0e0f11;--surface:#16181c;--surface2:#1e2026;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);--text:#e8eaf0;--muted:#6b7280;--accent:#22d3a0;--amber:#f59e0b;--red:#f87171;--blue:#60a5fa;--purple:#a78bfa;--font:'Sora',sans-serif;--mono:'DM Mono',monospace}
@@ -58,7 +58,7 @@
 <body>
 <div class="header">
   <div class="logo"><div class="dot"></div>Coordinator Dashboard</div>
-  <div class="meta">Updated 21 Mar 2026, 05:33 AM &nbsp;·&nbsp; 18 Mar–18 Jun &nbsp;·&nbsp; <span id="vc"></span></div>
+  <div class="meta">Updated 21 Mar 2026, 05:59 AM &nbsp;·&nbsp; 18 Mar–18 Jun &nbsp;·&nbsp; <span id="vc"></span></div>
 </div>
 <div class="layout">
   <div class="sidebar">
@@ -76,7 +76,23 @@
   <div class="main"><div id="detail"><div class="empty"><div style="font-size:28px;opacity:.3">←</div><div>Select a job to view the bid</div></div></div></div>
 </div>
 <script>
-const JOBS=[];
+const JOBS=[
+  {
+    "index": 3,
+    "title": "GPU and CPU Installation",
+    "budget": "$70",
+    "location": "not specified",
+    "category": "assembly",
+    "dateNote": "Thu, Apr 9",
+    "inDateWindow": true,
+    "score": 60,
+    "scoreLevel": "med",
+    "assignTo": "Either",
+    "reason": "Computer hardware assembly job with decent budget within our assembly category.",
+    "bidMessage": "We can help you install your GPU and CPU components. Our professional team of 2 has experience with computer hardware assembly and installation. We're available on April 9th and keen to help you get your system up and running properly.",
+    "url": "https://www.airtasker.com/tasks/gpu-and-cpu-installed-x01km6yrw9nyvpees4xv8gjdh4w/"
+  }
+];
 function sc(s){return s>=65?'var(--accent)':s>=35?'var(--amber)':'var(--muted)'}
 function sl(s){return s>=65?'sh':s>=35?'sm':'sl'}
 function tc(t){return t==='Team A'?'ta':t==='Team B'?'tb':'te'}
