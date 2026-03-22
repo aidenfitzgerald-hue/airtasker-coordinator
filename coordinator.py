@@ -77,13 +77,13 @@ async def scrape_jobs() -> list[dict]:
         await page.goto(
             "https://www.airtasker.com/tasks/?sort=new",
             wait_until="domcontentloaded",
-            timeout=30000,
+            timeout=60000,
         )
-        await page.wait_for_timeout(3000)
+        await page.wait_for_timeout(6000)
 
         for i in range(SCROLL_PASSES):
             await page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
-            await page.wait_for_timeout(2000)
+            await page.wait_for_timeout(4000)
             print(f"       Scroll pass {i+1}/{SCROLL_PASSES}")
 
         raw_jobs = await page.evaluate("""
