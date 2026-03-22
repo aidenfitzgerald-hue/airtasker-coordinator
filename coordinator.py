@@ -24,7 +24,7 @@ ANTHROPIC_KEY = os.environ["ANTHROPIC_API_KEY"]
 
 MAX_RADIUS_KM = 50
 BASE_SUBURB   = "Rose Bay, Sydney"
-SCROLL_PASSES = 8
+SCROLL_PASSES = 50
 OUTPUT_PATH   = Path("docs/dashboard.html")
 
 
