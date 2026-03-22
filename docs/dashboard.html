@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jobs — 22 Mar 2026, 09:01 PM</title>
+<title>Jobs — 22 Mar 2026, 09:57 PM</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@400;500;600&display=swap');
   :root{--bg:#0e0f11;--surface:#16181c;--surface2:#1e2026;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);--text:#e8eaf0;--muted:#6b7280;--accent:#22d3a0;--amber:#f59e0b;--blue:#60a5fa;--purple:#a78bfa;--font:'Sora',sans-serif;--mono:'DM Mono',monospace}
@@ -57,7 +57,7 @@
 <body>
 <div class="header">
   <div class="logo"><div class="dot"></div>Coordinator Dashboard</div>
-  <div class="meta">Updated 22 Mar 2026, 09:01 PM &nbsp;·&nbsp; Rose Bay 50km &nbsp;·&nbsp; <span id="vc"></span></div>
+  <div class="meta">Updated 22 Mar 2026, 09:57 PM &nbsp;·&nbsp; Rose Bay 50km &nbsp;·&nbsp; <span id="vc"></span></div>
 </div>
 <div class="layout">
   <div class="sidebar">
@@ -79,7 +79,34 @@
   </div>
 </div>
 <script>
-const JOBS=[];
+const JOBS=[
+  {
+    "index": 2,
+    "title": "Put together and tune new bike",
+    "budget": "$100",
+    "location": "not specified",
+    "category": "assembly",
+    "score": 75,
+    "scoreLevel": "high",
+    "assignTo": "Team A",
+    "reason": "Assembly job with good budget, bike assembly fits our assembly category.",
+    "bidMessage": "We can help you assemble and tune your new bike to get you riding safely. Our professional team of 2 has experience with bike assembly and will ensure everything is properly adjusted and ready to ride. We are available and ready to help with your bike setup.",
+    "url": "https://www.airtasker.com/tasks/put-it-together-and-tune-new-bike-x01kmbpmfvpxvbkmnxa3ghkn303/"
+  },
+  {
+    "index": 14,
+    "title": "New cables for gold gym XR30",
+    "budget": "$150",
+    "location": "not specified",
+    "category": "assembly",
+    "score": 75,
+    "scoreLevel": "high",
+    "assignTo": "Team B",
+    "reason": "Gym equipment repair/assembly with good budget fits our assembly category.",
+    "bidMessage": "We can help you install new cables on your Gold Gym XR30 equipment. Our professional team of 2 has experience working with gym equipment and will ensure the cables are properly installed for safe operation. We are available and ready to help get your gym equipment working again.",
+    "url": "https://www.airtasker.com/tasks/new-cables-for-gold-gym-xr30-x01kmaphzeebqw044bbjab7vefw/"
+  }
+];
 function sc(s){return s>=65?'var(--accent)':s>=35?'var(--amber)':'var(--muted)'}
 function sl(s){return s>=65?'sh':s>=35?'sm':'sl'}
 function tc(t){return t==='Team A'?'ta':t==='Team B'?'tb':'te'}
