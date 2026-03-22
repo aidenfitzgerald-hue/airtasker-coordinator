@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jobs — 22 Mar 2026, 01:01 AM</title>
+<title>Jobs — 22 Mar 2026, 01:06 AM</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@400;500;600&display=swap');
-  :root{--bg:#0e0f11;--surface:#16181c;--surface2:#1e2026;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);--text:#e8eaf0;--muted:#6b7280;--accent:#22d3a0;--amber:#f59e0b;--red:#f87171;--blue:#60a5fa;--purple:#a78bfa;--font:'Sora',sans-serif;--mono:'DM Mono',monospace}
+  :root{--bg:#0e0f11;--surface:#16181c;--surface2:#1e2026;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);--text:#e8eaf0;--muted:#6b7280;--accent:#22d3a0;--amber:#f59e0b;--blue:#60a5fa;--purple:#a78bfa;--font:'Sora',sans-serif;--mono:'DM Mono',monospace}
   *{box-sizing:border-box;margin:0;padding:0}
   body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh}
   .header{padding:18px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--bg);z-index:10}
@@ -35,7 +35,6 @@
   .tl{background:rgba(167,139,250,.12);color:var(--purple)}
   .ta{background:rgba(34,211,160,.12);color:var(--accent)}
   .tb{background:rgba(245,158,11,.12);color:var(--amber)}
-  .te{background:rgba(255,255,255,.06);color:var(--muted)}
   .jreason{font-size:11px;color:var(--muted);margin-bottom:7px;line-height:1.5}
   .brow{display:flex;align-items:center;gap:8px}
   .btrack{flex:1;height:3px;background:var(--border);border-radius:3px;overflow:hidden}
@@ -58,7 +57,7 @@
 <body>
 <div class="header">
   <div class="logo"><div class="dot"></div>Coordinator Dashboard</div>
-  <div class="meta">Updated 22 Mar 2026, 01:01 AM &nbsp;·&nbsp; 18 Mar–18 Jun &nbsp;·&nbsp; <span id="vc"></span></div>
+  <div class="meta">Updated 22 Mar 2026, 01:06 AM &nbsp;·&nbsp; Rose Bay 50km &nbsp;·&nbsp; <span id="vc"></span></div>
 </div>
 <div class="layout">
   <div class="sidebar">
@@ -73,7 +72,11 @@
     </div>
     <div id="jlist"></div>
   </div>
-  <div class="main"><div id="detail"><div class="empty"><div style="font-size:28px;opacity:.3">←</div><div>Select a job to view the bid</div></div></div></div>
+  <div class="main">
+    <div id="detail">
+      <div class="empty"><div style="font-size:28px;opacity:.3">←</div><div>Select a job to view the bid</div></div>
+    </div>
+  </div>
 </div>
 <script>
 const JOBS=[];
@@ -84,14 +87,22 @@ function renderList(jobs){
   const el=document.getElementById('jlist');
   el.innerHTML='';
   document.getElementById('vc').textContent=jobs.length+' job'+(jobs.length!==1?'s':'');
-  jobs.forEach((j,i)=>{
+  jobs.forEach((j)=>{
     const d=document.createElement('div');
     d.className='job-card '+sl(j.score);
     d.onclick=()=>sel(j,d);
-    d.innerHTML=`<div class="jt"><div class="jname">${j.title}</div><div class="jprice">${j.budget}</div></div>
-    <div class="tags"><span class="tag tc">${j.category}</span>${j.location!=='not specified'?'<span class="tag tl">'+j.location+'</span>':''}<span class="tag ${tc(j.assignTo)}">${j.assignTo}</span>${j.dateNote&&j.dateNote!=='no date specified'?'<span class="tag te">'+j.dateNote+'</span>':''}</div>
-    <div class="jreason">${j.reason}</div>
-    <div class="brow"><div class="btrack"><div class="bfill" style="width:${j.score}%;background:${sc(j.score)}"></div></div><div class="bnum">${j.score}/100</div></div>`;
+    d.innerHTML=`
+      <div class="jt"><div class="jname">${j.title}</div><div class="jprice">${j.budget}</div></div>
+      <div class="tags">
+        <span class="tag tc">${j.category}</span>
+        ${j.location&&j.location!=='not specified'?'<span class="tag tl">'+j.location+'</span>':''}
+        <span class="tag ${tc(j.assignTo)}">${j.assignTo}</span>
+      </div>
+      <div class="jreason">${j.reason}</div>
+      <div class="brow">
+        <div class="btrack"><div class="bfill" style="width:${j.score}%;background:${sc(j.score)}"></div></div>
+        <div class="bnum">${j.score}/100</div>
+      </div>`;
     el.appendChild(d);
   });
   if(jobs.length>0)sel(jobs[0],el.firstChild);
@@ -100,29 +111,37 @@ function sel(j,el){
   document.querySelectorAll('.job-card').forEach(c=>c.classList.remove('active'));
   el.classList.add('active');
   const link=j.url?`<a class="obtn" href="${j.url}" target="_blank">Open on Airtasker ↗</a>`:'';
-  document.getElementById('detail').innerHTML=`<div class="panel">
-    <div class="ptitle">${j.title}</div>
-    <div class="psub">${j.location} · ${j.budget} · ${j.dateNote} · ${j.assignTo}</div>
-    <div class="plabel"><span>Bid message — copy and paste into Airtasker</span><button class="cbtn" id="cb" onclick="copy()">Copy</button></div>
-    <div class="bidbox" id="bt">${j.bidMessage}</div>
-    <div style="display:flex;gap:8px;align-items:center">${link}<span style="font-size:11px;color:var(--muted)">Score ${j.score}/100</span></div>
-  </div>`;
+  document.getElementById('detail').innerHTML=`
+    <div class="panel">
+      <div class="ptitle">${j.title}</div>
+      <div class="psub">${j.location||'Location not stated'} · ${j.budget} · ${j.assignTo}</div>
+      <div class="plabel">
+        <span>Bid message — copy and paste into Airtasker</span>
+        <button class="cbtn" id="cb" onclick="copy()">Copy</button>
+      </div>
+      <div class="bidbox" id="bt">${j.bidMessage}</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        ${link}<span style="font-size:11px;color:var(--muted)">Score ${j.score}/100</span>
+      </div>
+    </div>`;
 }
 function copy(){
   navigator.clipboard.writeText(document.getElementById('bt').textContent).then(()=>{
-    const b=document.getElementById('cb');b.textContent='Copied ✓';b.classList.add('ok');
+    const b=document.getElementById('cb');
+    b.textContent='Copied ✓';b.classList.add('ok');
     setTimeout(()=>{b.textContent='Copy';b.classList.remove('ok')},2000);
   });
 }
 function filt(type,btn){
-  document.querySelectorAll('.f-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
+  document.querySelectorAll('.f-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
   let f=JOBS;
-  if(type==='A')f=JOBS.filter(j=>j.assignTo==='Team A'||j.assignTo==='Either');
-  else if(type==='B')f=JOBS.filter(j=>j.assignTo==='Team B'||j.assignTo==='Either');
-  else if(type==='high')f=JOBS.filter(j=>j.score>=65);
-  else if(type==='assembly')f=JOBS.filter(j=>j.category==='assembly');
-  else if(type==='removals')f=JOBS.filter(j=>j.category==='removals');
-  else if(type==='gardening')f=JOBS.filter(j=>j.category==='gardening');
+  if(type==='A') f=JOBS.filter(j=>j.assignTo==='Team A'||j.assignTo==='Either');
+  else if(type==='B') f=JOBS.filter(j=>j.assignTo==='Team B'||j.assignTo==='Either');
+  else if(type==='high') f=JOBS.filter(j=>j.score>=65);
+  else if(type==='assembly') f=JOBS.filter(j=>j.category==='assembly');
+  else if(type==='removals') f=JOBS.filter(j=>j.category==='removals');
+  else if(type==='gardening') f=JOBS.filter(j=>j.category==='gardening');
   renderList(f);
 }
 renderList(JOBS);
