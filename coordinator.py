@@ -236,6 +236,8 @@ async def score_all(jobs: list[dict]) -> list[dict]:
         scored = await score_batch(batch)
         all_scored.extend(scored)
 
+    for j in all_scored:
+        print(f"  → {j.get('category','?')} | {j.get('assignTo','?')} | {j.get('budget','?')} | {j.get('title','?')[:40]}")
     all_scored = [j for j in all_scored if j.get("assignTo") != "Skip"]
     all_scored.sort(key=lambda x: x.get("score", 0), reverse=True)
     print(f"[2/3] {len(all_scored)} viable jobs after filtering.")
